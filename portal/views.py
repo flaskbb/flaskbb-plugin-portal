@@ -15,6 +15,7 @@ from flask_login import current_user
 from flaskbb.utils.helpers import render_template
 from flaskbb.forum.models import Topic, Post, Forum
 from flaskbb.user.models import User, Group
+from flaskbb.plugins.models import PluginRegistry
 from flaskbb.utils.helpers import time_diff, get_online_users
 from flaskbb.utils.settings import flaskbb_config
 
@@ -28,14 +29,14 @@ def inject_portal_link():
 @portal.route("/")
 def index():
     page = request.args.get('page', 1, type=int)
+    forum_ids = []
 
-    try:
-        forum_ids = flaskbb_config["PLUGIN_PORTAL_FORUM_IDS"]
-    except KeyError:
-        forum_ids = []
+    plugin = PluginRegistry.query.filter_by(name="portal").first()
+    if plugin and not plugin.settings:
         flash(_("Please install the plugin first to configure the forums "
                 "which should be displayed."), "warning")
-
+    else:
+        forum_ids = plugin.settings['forum_ids']
     group_ids = [group.id for group in current_user.groups]
     forums = Forum.query.filter(Forum.groups.any(Group.id.in_(group_ids)))
 
@@ -50,7 +51,7 @@ def index():
     all_ids = [f.id for f in forums.all()]
     recent_topics = Topic.query.filter(Topic.forum_id.in_(all_ids)).\
         order_by(Topic.last_updated.desc()).\
-        limit(flaskbb_config.get("PLUGIN_PORTAL_RECENT_TOPICS", 10))
+        limit(plugin.settings.get('recent_topics', 10))
 
     user_count = User.query.count()
     topic_count = Topic.query.count()
