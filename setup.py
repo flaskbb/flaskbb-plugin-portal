@@ -6,6 +6,19 @@
     plugin.
 """
 from setuptools import find_packages, setup
+from setuptools.command.install import install
+
+
+class InstallWithTranslations(install):
+    def run(self):
+        # https://stackoverflow.com/a/41120180
+        from babel.messages.frontend import compile_catalog
+        compiler = compile_catalog(self.distribution)
+        option_dict = self.distribution.get_option_dict('compile_catalog')
+        compiler.domain = [option_dict['domain'][1]]
+        compiler.directory = option_dict['directory'][1]
+        compiler.run()
+        super().run()
 
 
 setup(
@@ -17,13 +30,35 @@ setup(
     author_email='peter.justin@outlook.com',
     description='A portal plugin for FlaskBB',
     long_description=__doc__,
+    keywords='flaskbb plugin portal',
+    cmdclass={'install': InstallWithTranslations},
     packages=find_packages('.'),
     include_package_data=True,
+    package_data={'': ['portal/translations/*/*/*.mo', 'portal/translations/*/*/*.po']},
     zip_safe=False,
     platforms='any',
     entry_points={
         'flaskbb_plugins': [
             'portal = portal'
         ]
-    }
+    },
+    install_requires=[
+        'FlaskBB>=1.0'
+    ],
+    setup_requires=[
+        'Babel',
+    ],
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Web Environment',
+        'Environment :: Plugins',
+        'Framework :: Flask',
+        'Intended Audience :: Developers, Users',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
+        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
+        'Topic :: Software Development :: Libraries :: Python Modules'
+    ],
 )
