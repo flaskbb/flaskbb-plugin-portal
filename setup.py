@@ -23,7 +23,7 @@ class InstallWithTranslations(install):
 
 setup(
     name='flaskbb-plugin-portal',
-    version='1.0',
+    version='1.0.3',
     url='http://github.com/sh4nks/flaskbb/',
     license='BSD',
     author='FlaskBB Team',
@@ -42,9 +42,9 @@ setup(
             'portal = portal'
         ]
     },
-    install_requires=[
-        'FlaskBB>=1.0'
-    ],
+    #install_requires=[
+    #    'FlaskBB'  # pin to a version to has pluggy integration
+    #],
     setup_requires=[
         'Babel',
     ],
@@ -53,7 +53,7 @@ setup(
         'Environment :: Web Environment',
         'Environment :: Plugins',
         'Framework :: Flask',
-        'Intended Audience :: Developers, Users',
+        'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
