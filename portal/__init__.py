@@ -10,7 +10,8 @@
 """
 import os
 from flaskbb.forum.models import Forum
-from flaskbb.utils.forms import SettingsValueTypes
+from flaskbb.utils.helpers import render_template
+from flaskbb.utils.forms import SettingValueType
 
 from .views import portal
 
@@ -32,10 +33,14 @@ def flaskbb_load_blueprints(app):
     app.register_blueprint(portal, url_prefix="/portal")
 
 
+def flaskbb_tpl_before_navigation():
+    return render_template("navigation_snippet.html")
+
+
 SETTINGS = {
     'forum_ids': {
         'value': [1],
-        'value_type': SettingsValueTypes.selectmultiple,
+        'value_type': SettingValueType.selectmultiple,
         'name': "Forum IDs",
         'description': ("The forum ids from which forums the posts "
                         "should be displayed on the portal."),
@@ -43,7 +48,7 @@ SETTINGS = {
     },
     'recent_topics': {
         'value': 10,
-        'value_type': SettingsValueTypes.integer,
+        'value_type': SettingValueType.integer,
         'name': "Number of Recent Topics",
         'description': "The number of topics in Recent Topics.",
         'extra': {"min": 1},
