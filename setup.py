@@ -1,18 +1,29 @@
 """
-    This is a
-    multiline
-    description for the portal
+    portal
+    ~~~~~~
 
-    plugin.
+    A portal plugin for FlaskBB.
+
+    :copyright: (c) 2018 by Peter Justin.
+    :license: BSD License, see LICENSE for more details.
 """
+import ast
+import re
 from setuptools import find_packages, setup
 from setuptools.command.install import install
+
+
+with open("portal/__init__.py", "rb") as f:
+    version_line = re.search(
+        r"__version__\s+=\s+(.*)", f.read().decode("utf-8")
+    ).group(1)
+    version = str(ast.literal_eval(version_line))
 
 
 class InstallWithTranslations(install):
     def run(self):
         # https://stackoverflow.com/a/41120180
-        from babel.messages.frontend import compile_catalog
+        from babel.messages.frontend import compile_catalog   # noqa
         compiler = compile_catalog(self.distribution)
         option_dict = self.distribution.get_option_dict('compile_catalog')
         compiler.domain = [option_dict['domain'][1]]
@@ -23,7 +34,7 @@ class InstallWithTranslations(install):
 
 setup(
     name='flaskbb-plugin-portal',
-    version='1.0.3',
+    version='1.1.0',
     url='http://github.com/sh4nks/flaskbb/',
     license='BSD',
     author='FlaskBB Team',
@@ -34,7 +45,9 @@ setup(
     cmdclass={'install': InstallWithTranslations},
     packages=find_packages('.'),
     include_package_data=True,
-    package_data={'': ['portal/translations/*/*/*.mo', 'portal/translations/*/*/*.po']},
+    package_data={
+        '': ['portal/translations/*/*/*.mo', 'portal/translations/*/*/*.po']
+    },
     zip_safe=False,
     platforms='any',
     entry_points={

@@ -16,6 +16,9 @@ from flaskbb.utils.forms import SettingValueType
 from .views import portal
 
 
+__version__ = "1.1.0"
+
+
 def available_forums():
     forums = Forum.query.order_by(Forum.id.asc()).all()
     return [(forum.id, forum.title) for forum in forums]
@@ -30,7 +33,10 @@ def flaskbb_load_translations():
 
 
 def flaskbb_load_blueprints(app):
-    app.register_blueprint(portal, url_prefix="/portal")
+    app.register_blueprint(
+        portal,
+        url_prefix=app.config.get("PLUGIN_PORTAL_URL_PREFIX", "/portal")
+    )
 
 
 def flaskbb_tpl_before_navigation():
