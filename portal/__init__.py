@@ -16,7 +16,7 @@ from flaskbb.utils.forms import SettingValueType
 from .views import portal
 
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 
 def available_forums():
