@@ -10,7 +10,6 @@
 import ast
 import re
 from setuptools import find_packages, setup
-from setuptools.command.install import install
 
 
 with open("portal/__init__.py", "rb") as f:
@@ -20,21 +19,9 @@ with open("portal/__init__.py", "rb") as f:
     version = str(ast.literal_eval(version_line))
 
 
-class InstallWithTranslations(install):
-    def run(self):
-        # https://stackoverflow.com/a/41120180
-        from babel.messages.frontend import compile_catalog   # noqa
-        compiler = compile_catalog(self.distribution)
-        option_dict = self.distribution.get_option_dict('compile_catalog')
-        compiler.domain = [option_dict['domain'][1]]
-        compiler.directory = option_dict['directory'][1]
-        compiler.run()
-        super().run()
-
-
 setup(
     name='flaskbb-plugin-portal',
-    version='1.1.0',
+    version=version,
     url='http://github.com/sh4nks/flaskbb/',
     license='BSD',
     author='FlaskBB Team',
@@ -42,11 +29,11 @@ setup(
     description='A portal plugin for FlaskBB',
     long_description=__doc__,
     keywords='flaskbb plugin portal',
-    cmdclass={'install': InstallWithTranslations},
     packages=find_packages('.'),
     include_package_data=True,
     package_data={
-        '': ['portal/translations/*/*/*.mo', 'portal/translations/*/*/*.po']
+        '': ['portal/translations/*/*/*.mo',
+             'portal/translations/*/*/*.po']
     },
     zip_safe=False,
     platforms='any',
@@ -55,9 +42,9 @@ setup(
             'portal = portal'
         ]
     },
-    #install_requires=[
-    #    'FlaskBB'  # pin to a version to has pluggy integration
-    #],
+    install_requires=[
+        'FlaskBB>=2.0.dev0'
+    ],
     setup_requires=[
         'Babel',
     ],
