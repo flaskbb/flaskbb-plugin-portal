@@ -39,7 +39,7 @@ def flaskbb_load_blueprints(app):
     )
 
 
-def flaskbb_tpl_before_navigation():
+def flaskbb_tpl_navigation_before():
     return render_template("navigation_snippet.html")
 
 
