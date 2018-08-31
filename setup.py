@@ -20,45 +20,40 @@ with open("portal/__init__.py", "rb") as f:
 
 
 setup(
-    name='flaskbb-plugin-portal',
+    name="flaskbb-plugin-portal",
     version=version,
-    url='http://github.com/sh4nks/flaskbb/',
-    license='BSD',
-    author='FlaskBB Team',
-    author_email='peter.justin@outlook.com',
-    description='A portal plugin for FlaskBB',
+    url="https://flaskbb.org",
+    project_urls={
+        "Code": "https://github.com/flaskbb/flaskbb-plugin-portal",
+        "Issue Tracker": "https://github.com/flaskbb/flaskbb-plugin-portal/issues",
+    },
+    license="BSD",
+    author="FlaskBB Team",
+    author_email="peter.justin@outlook.com",
+    description="A portal plugin for FlaskBB",
     long_description=__doc__,
-    keywords='flaskbb plugin portal',
-    packages=find_packages('.'),
+    keywords="flaskbb plugin portal",
+    packages=find_packages("."),
     include_package_data=True,
     package_data={
-        '': ['portal/translations/*/*/*.mo',
-             'portal/translations/*/*/*.po']
+        "": ["portal/translations/*/*/*.mo", "portal/translations/*/*/*.po"]
     },
     zip_safe=False,
-    platforms='any',
-    entry_points={
-        'flaskbb_plugins': [
-            'portal = portal'
-        ]
-    },
-    install_requires=[
-        'FlaskBB>=2.0.dev0'
-    ],
-    setup_requires=[
-        'Babel',
-    ],
+    platforms="any",
+    entry_points={"flaskbb_plugins": ["portal = portal"]},
+    install_requires=["FlaskBB>=2.0.dev0"],
+    setup_requires=["Babel"],
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Environment :: Web Environment',
-        'Environment :: Plugins',
-        'Framework :: Flask',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
-        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-        'Topic :: Software Development :: Libraries :: Python Modules'
+        "Development Status :: 5 - Production/Stable",
+        "Environment :: Web Environment",
+        "Environment :: Plugins",
+        "Framework :: Flask",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: BSD License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+        "Topic :: Software Development :: Libraries :: Python Modules",
     ],
 )

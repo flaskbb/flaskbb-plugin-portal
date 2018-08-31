@@ -25,17 +25,16 @@ def available_forums():
 
 
 def flaskbb_load_migrations():
-    return os.path.join(os.path.dirname(__file__), 'migrations')
+    return os.path.join(os.path.dirname(__file__), "migrations")
 
 
 def flaskbb_load_translations():
-    return os.path.join(os.path.dirname(__file__), 'translations')
+    return os.path.join(os.path.dirname(__file__), "translations")
 
 
 def flaskbb_load_blueprints(app):
     app.register_blueprint(
-        portal,
-        url_prefix=app.config.get("PLUGIN_PORTAL_URL_PREFIX", "/portal")
+        portal, url_prefix=app.config.get("PLUGIN_PORTAL_URL_PREFIX", "/portal")
     )
 
 
@@ -44,19 +43,21 @@ def flaskbb_tpl_navigation_before():
 
 
 SETTINGS = {
-    'forum_ids': {
-        'value': [1],
-        'value_type': SettingValueType.selectmultiple,
-        'name': "Forum IDs",
-        'description': ("The forum ids from which forums the posts "
-                        "should be displayed on the portal."),
-        'extra': {"choices": available_forums, "coerce": int}
+    "forum_ids": {
+        "value": [1],
+        "value_type": SettingValueType.selectmultiple,
+        "name": "Forum IDs",
+        "description": (
+            "The forum ids from which forums the posts "
+            "should be displayed on the portal."
+        ),
+        "extra": {"choices": available_forums, "coerce": int},
     },
-    'recent_topics': {
-        'value': 10,
-        'value_type': SettingValueType.integer,
-        'name': "Number of Recent Topics",
-        'description': "The number of topics in Recent Topics.",
-        'extra': {"min": 1},
+    "recent_topics": {
+        "value": 10,
+        "value_type": SettingValueType.integer,
+        "name": "Number of Recent Topics",
+        "description": "The number of topics in Recent Topics.",
+        "extra": {"min": 1},
     },
 }
