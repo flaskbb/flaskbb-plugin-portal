@@ -9,14 +9,19 @@
     :license: BSD, see LICENSE for more details.
 """
 import os
+
+from pluggy import HookimplMarker
+
 from flaskbb.forum.models import Forum
-from flaskbb.utils.helpers import render_template
 from flaskbb.utils.forms import SettingValueType
+from flaskbb.utils.helpers import render_template
 
 from .views import portal
 
-
 __version__ = "1.1.1"
+
+
+hookimpl = HookimplMarker("flaskbb")
 
 
 def available_forums():
@@ -24,20 +29,24 @@ def available_forums():
     return [(forum.id, forum.title) for forum in forums]
 
 
+@hookimpl
 def flaskbb_load_migrations():
     return os.path.join(os.path.dirname(__file__), "migrations")
 
 
+@hookimpl
 def flaskbb_load_translations():
     return os.path.join(os.path.dirname(__file__), "translations")
 
 
+@hookimpl
 def flaskbb_load_blueprints(app):
     app.register_blueprint(
         portal, url_prefix=app.config.get("PLUGIN_PORTAL_URL_PREFIX", "/portal")
     )
 
 
+@hookimpl
 def flaskbb_tpl_navigation_before():
     return render_template("navigation_snippet.html")
 
