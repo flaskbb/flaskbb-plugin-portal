@@ -18,7 +18,7 @@ from flaskbb.utils.helpers import render_template
 
 from .views import portal
 
-__version__ = "1.1.1"
+__version__ = "1.1.2"
 
 
 hookimpl = HookimplMarker("flaskbb")
