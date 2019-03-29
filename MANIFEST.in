@@ -1,4 +1,5 @@
 graft portal/templates
 graft portal/translations
+graft portal/migrations
 
 global-exclude *.pyc __pycache__ .keep
