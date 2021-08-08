@@ -82,11 +82,11 @@
 
   <!-- Left -->
   <div class="col-md-8">
-    <div class="panel panel-default panel-widget">
-      <div class="panel-heading panel-widget-heading">
-        <h3 class="panel-title">{% trans %}News{% endtrans %}</h3>
+    <div class="card card-default card-widget">
+      <div class="card-header card-widget-header">
+        <span class="card-title fw-bold">{% trans %}News{% endtrans %}</span>
       </div>
-      <div class="panel-body panel-widget-body" style="padding-top: 0px">
+      <div class="card-body card-widget-body" style="padding-top: 0px">
 
       {% for topic in news.items %}
         <h1><a href="{{ topic.url }}">{{ topic.title }}</a></h1>
@@ -101,18 +101,18 @@
         {% if not loop.last %}<hr>{% endif %}
       {% endfor %}
 
-      </div> <!-- /.panel-body -->
+      </div> <!-- /.card-body -->
     </div>
 
   </div>
 
   <!-- Right -->
   <div class="col-md-4">
-    <div class="panel panel-default panel-widget">
-      <div class="panel-heading panel-widget-heading">
-        <h3 class="panel-title">{% trans %}Recent Topics{% endtrans %}</h3>
+    <div class="card card-default card-widget mb-3">
+      <div class="card-header card-widget-header">
+        <span class="card-title fw-bold">{% trans %}Recent Topics{% endtrans %}</span>
       </div>
-      <div class="panel-body panel-widget-body">
+      <div class="card-body card-widget-body">
       {% for topic in recent_topics %}
 
           <div class="portal-topic">
@@ -131,11 +131,11 @@
       </div>
     </div>
 
-    <div class="panel panel-default panel-widget">
-      <div class="panel-heading panel-widget-heading">
-        <h3 class="panel-title">{% trans %}Statistics{% endtrans %}</h3>
+    <div class="card card-default card-widget">
+      <div class="card-header card-widget-header">
+        <span class="card-title fw-bold">{% trans %}Statistics{% endtrans %}</span>
       </div>
-      <div class="panel-body panel-widget-body">
+      <div class="card-body card-widget-body">
 
             <div class="portal-stats">
               <div class="portal-stats-left">
