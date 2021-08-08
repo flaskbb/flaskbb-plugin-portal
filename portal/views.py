@@ -22,10 +22,6 @@ from flaskbb.utils.settings import flaskbb_config
 portal = Blueprint("portal", __name__, template_folder="templates")
 
 
-def inject_portal_link():
-    return render_template("navigation_snippet.html")
-
-
 @portal.route("/")
 def index():
     page = request.args.get("page", 1, type=int)

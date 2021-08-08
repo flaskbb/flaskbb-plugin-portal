@@ -11,7 +11,9 @@
 import os
 
 from pluggy import HookimplMarker
+from flask_babelplus import gettext as _
 
+from flaskbb.display.navigation import NavigationLink
 from flaskbb.forum.models import Forum
 from flaskbb.utils.forms import SettingValueType
 from flaskbb.utils.helpers import render_template
@@ -48,7 +50,11 @@ def flaskbb_load_blueprints(app):
 
 @hookimpl
 def flaskbb_tpl_navigation_before():
-    return render_template("navigation_snippet.html")
+    return NavigationLink(
+        endpoint="portal.index",
+        name=_("Portal"),
+        icon="fas fa-home",
+    )
 
 
 SETTINGS = {
