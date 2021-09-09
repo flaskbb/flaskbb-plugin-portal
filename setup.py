@@ -41,7 +41,7 @@ setup(
     zip_safe=False,
     platforms="any",
     entry_points={"flaskbb_plugins": ["portal = portal"]},
-    install_requires=["FlaskBB>=2.0.dev0"],
+    install_requires=["FlaskBB>=2.1.0"],
     setup_requires=["Babel"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",

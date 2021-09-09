@@ -16,11 +16,10 @@ from flask_babelplus import gettext as _
 from flaskbb.display.navigation import NavigationLink
 from flaskbb.forum.models import Forum
 from flaskbb.utils.forms import SettingValueType
-from flaskbb.utils.helpers import render_template
 
 from .views import portal
 
-__version__ = "1.1.3"
+__version__ = "1.2.0"
 
 
 hookimpl = HookimplMarker("flaskbb")
