@@ -9,14 +9,21 @@
 """
 import ast
 import re
+import os
 from setuptools import find_packages, setup
 
 
-with open("portal/__init__.py", "rb") as f:
-    version_line = re.search(
-        r"__version__\s+=\s+(.*)", f.read().decode("utf-8")
-    ).group(1)
-    version = str(ast.literal_eval(version_line))
+def read(*parts):
+    here = os.path.abspath(os.path.dirname(__file__))
+    with open(os.path.join(here, *parts), "r") as fp:
+        return fp.read()
+
+
+long_description = read("README.md")
+version_line = re.search(
+    r"__version__\s+=\s+(.*)", read("portal", "__init__.py")
+).group(1)
+version = str(ast.literal_eval(version_line))
 
 
 setup(
@@ -31,7 +38,8 @@ setup(
     author="FlaskBB Team",
     author_email="peter.justin@outlook.com",
     description="A portal plugin for FlaskBB",
-    long_description=__doc__,
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     keywords="flaskbb plugin portal",
     packages=find_packages("."),
     include_package_data=True,
