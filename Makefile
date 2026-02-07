@@ -25,23 +25,18 @@ test:
 docs:
 	$(MAKE) -C docs html
 
-lint:check-flake8
-	flake8
-
-check-flake8:
-	@type flake8 >/dev/null 2>&1 || echo "Flake8 is not installed. You can install it with 'pip install flake8'."
-
-isort:check-isort
-	isort --order-by-type -rc -up
-
-check-isort:
-	@type isort >/dev/null 2>&1 || echo "isort is not installed. You can install it with 'pip install isort'."
+format: ## Sorts the imports and reformats the code
+	# sort imports / remove unused
+	ruff check --fix --select I
+	ruff check --fix
+	# reformat
+	ruff format
 
 dist:
-	python setup.py sdist bdist_wheel
+	uv build
 
 upload:dist
-	twine upload dist/*
+	twine upload dist/* --skip-existing
 
 update-translations:
 	pybabel extract -F babel.cfg -k lazy_gettext -o portal/translations/messages.pot .

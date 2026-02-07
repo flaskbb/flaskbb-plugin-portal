@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
 """
-    flaskbb.plugins.portal.views
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+flaskbb.plugins.portal.views
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    This module contains the portal view.
+This module contains the portal view.
 
-    :copyright: (c) 2014 by the FlaskBB Team.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2014 by the FlaskBB Team.
+:license: BSD, see LICENSE for more details.
 """
+
 from flask import Blueprint, current_app, flash, request
 from flask_babelplus import gettext as _
 from flask_login import current_user
-
-from flaskbb.utils.helpers import render_template
-from flaskbb.forum.models import Topic, Post, Forum
-from flaskbb.user.models import User, Group
+from flaskbb.extensions import db
+from flaskbb.forum.models import Forum, Post, Topic
 from flaskbb.plugins.models import PluginRegistry
-from flaskbb.utils.helpers import time_diff, get_online_users
+from flaskbb.user.models import Group, User
+from flaskbb.utils.helpers import get_online_users, render_template, time_diff
 from flaskbb.utils.settings import flaskbb_config
+from sqlalchemy import select
 
 portal = Blueprint("portal", __name__, template_folder="templates")
 
@@ -27,7 +28,7 @@ def index():
     page = request.args.get("page", 1, type=int)
     forum_ids = []
 
-    plugin = PluginRegistry.query.filter_by(name="portal").first()
+    plugin = PluginRegistry.get_by(name="portal")
     if plugin and not plugin.settings:
         flash(
             _(
@@ -37,35 +38,53 @@ def index():
             "warning",
         )
     else:
-        forum_ids = plugin.settings["forum_ids"]
+        forum_ids: list[int] = plugin.settings["forum_ids"]
     group_ids = [group.id for group in current_user.groups]
-    forums = Forum.query.filter(Forum.groups.any(Group.id.in_(group_ids)))
+
+    forums = (
+        db.session.execute(
+            select(Forum).where(
+                Forum.groups.any(Group.id.in_(group_ids)), Forum.id.in_(forum_ids)
+            )
+        )
+        .scalars()
+        .unique()
+    )
 
     # get the news forums - check for permissions
-    news_ids = [f.id for f in forums.filter(Forum.id.in_(forum_ids)).all()]
-    news = (
-        Topic.query.filter(Topic.forum_id.in_(news_ids))
-        .order_by(Topic.id.desc())
-        .paginate(page=page, per_page=flaskbb_config["TOPICS_PER_PAGE"], error_out=True)
+    news_ids = [f.id for f in forums]
+    news = db.paginate(
+        select(Topic).where(Topic.forum_id.in_(news_ids)).order_by(Topic.id.desc()),
+        page=page,
+        per_page=flaskbb_config["TOPICS_PER_PAGE"],
+        error_out=True,
     )
 
     # get the recent topics from all to the user available forums (not just the
     # configured ones)
-    all_ids = [f.id for f in forums.all()]
-    recent_topics = (
-        Topic.query.filter(Topic.forum_id.in_(all_ids))
+    all_forums = (
+        db.session.execute(
+            select(Forum).where(Forum.groups.any(Group.id.in_(group_ids)))
+        )
+        .scalars()
+        .unique()
+    )
+    all_ids = [f.id for f in all_forums]
+    recent_topics = db.session.execute(
+        select(Topic)
+        .where(Topic.forum_id.in_(all_ids))
         .order_by(Topic.last_updated.desc())
         .limit(plugin.settings.get("recent_topics", 10))
-    )
+    ).scalars()
 
-    user_count = User.query.count()
-    topic_count = Topic.query.count()
-    post_count = Post.query.count()
-    newest_user = User.query.order_by(User.id.desc()).first()
+    user_count = User.count()
+    topic_count = Topic.count()
+    post_count = Post.count()
+    newest_user = db.session.execute(select(User).order_by(User.id.desc())).scalar()
 
     # Check if we use redis or not
     if not current_app.config["REDIS_ENABLED"]:
-        online_users = User.query.filter(User.lastseen >= time_diff()).count()
+        online_users = User.count(clause=[User.lastseen >= time_diff()])
         online_guests = None
     else:
         online_users = len(get_online_users())

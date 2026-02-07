@@ -1,21 +1,24 @@
 # -*- coding: utf-8 -*-
 """
-    flaskbb.plugins.portal
-    ~~~~~~~~~~~~~~~~~~~~~~
+flaskbb.plugins.portal
+~~~~~~~~~~~~~~~~~~~~~~
 
-    A Portal Plugin for FlaskBB.
+A Portal Plugin for FlaskBB.
 
-    :copyright: (c) 2014 by the FlaskBB Team.
-    :license: BSD, see LICENSE for more details.
+:copyright: (c) 2014 by the FlaskBB Team.
+:license: BSD, see LICENSE for more details.
 """
+
 import os
 
-from pluggy import HookimplMarker
+from flask import Flask
 from flask_babelplus import gettext as _
-
 from flaskbb.display.navigation import NavigationLink
+from flaskbb.extensions import db
 from flaskbb.forum.models import Forum
 from flaskbb.utils.forms import SettingValueType
+from pluggy import HookimplMarker
+from sqlalchemy import select
 
 from .views import portal
 
@@ -26,7 +29,9 @@ hookimpl = HookimplMarker("flaskbb")
 
 
 def available_forums():
-    forums = Forum.query.order_by(Forum.id.asc()).all()
+    forums = (
+        db.session.execute(select(Forum).order_by(Forum.id.asc())).scalars().unique()
+    )
     return [(forum.id, forum.title) for forum in forums]
 
 
@@ -41,7 +46,7 @@ def flaskbb_load_translations():
 
 
 @hookimpl
-def flaskbb_load_blueprints(app):
+def flaskbb_load_blueprints(app: Flask):
     app.register_blueprint(
         portal, url_prefix=app.config.get("PLUGIN_PORTAL_URL_PREFIX", "/portal")
     )
