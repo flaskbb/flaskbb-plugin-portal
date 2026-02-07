@@ -28,6 +28,6 @@ $ pip install flaskbb-plugin-portal
 
 # Links
 
-* [FlaskBB Website](https://flaskbb.org)
+* [FlaskBB Website](https://flaskbb.com)
 * [Source Code](https://github.com/flaskbb/flaskbb-plugin-portal)
 * [Issue Tracker](https://github.com/flaskbb/flaskbb-plugin-portal/issues)
