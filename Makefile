@@ -35,8 +35,8 @@ format: ## Sorts the imports and reformats the code
 dist:
 	uv build
 
-upload:dist
-	twine upload dist/* --skip-existing
+upload:
+	twine upload dist/{*.tar.gz,*.whl} --skip-existing
 
 update-translations:
 	pybabel extract -F babel.cfg -k lazy_gettext -o portal/translations/messages.pot .
