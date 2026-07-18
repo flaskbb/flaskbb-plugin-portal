@@ -10,14 +10,15 @@ This module contains the portal view.
 """
 
 from flask import Blueprint, current_app, flash, request
+from flask.helpers import redirect
 from flask_babelplus import gettext as _
 from flask_login import current_user
+from flaskbb.core.settings import flaskbb_config
 from flaskbb.extensions import db
 from flaskbb.forum.models import Forum, Post, Topic
 from flaskbb.plugins.models import PluginRegistry
 from flaskbb.user.models import Group, User
 from flaskbb.utils.helpers import get_online_users, render_template, time_diff
-from flaskbb.utils.settings import flaskbb_config
 from sqlalchemy import select
 
 portal = Blueprint("portal", __name__, template_folder="templates")
@@ -29,7 +30,13 @@ def index():
     forum_ids = []
 
     plugin = PluginRegistry.get_by(name="portal")
-    if plugin and not plugin.settings:
+    if not plugin:
+        flash(
+            _("Plugin 'portal' could not be found in the plugin registry."),
+            "warning",
+        )
+        return redirect("forum.index")
+    if not plugin.settings:
         flash(
             _(
                 "Please install the plugin first to configure the forums "
@@ -38,7 +45,7 @@ def index():
             "warning",
         )
     else:
-        forum_ids: list[int] = plugin.settings["forum_ids"]
+        forum_ids: list[int] = plugin.settings["FORUM_IDS"]
     group_ids = [group.id for group in current_user.groups]
 
     forums = (

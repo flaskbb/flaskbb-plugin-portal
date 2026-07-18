@@ -13,10 +13,11 @@ import os
 
 from flask import Flask
 from flask_babelplus import gettext as _
+from flaskbb.core.settings import SelectMultipleSetting
+from flaskbb.core.settings.definitions import IntSetting, SettingGroup, StringSetting
 from flaskbb.display.navigation import NavigationLink
 from flaskbb.extensions import db
 from flaskbb.forum.models import Forum
-from flaskbb.utils.forms import SettingValueType
 from pluggy import HookimplMarker
 from sqlalchemy import select
 
@@ -61,22 +62,35 @@ def flaskbb_tpl_navigation_before():
     )
 
 
-SETTINGS = {
-    "forum_ids": {
-        "value": [1],
-        "value_type": SettingValueType.selectmultiple,
-        "name": "Forum IDs",
-        "description": (
-            "The forum ids from which forums the posts "
-            "should be displayed on the portal."
+impl = HookimplMarker("flaskbb")
+
+SETTINGS = SettingGroup(
+    key="portal",
+    name="Portal Settings",
+    description="Portal settings for your FlaskBB forum.",
+    settings=(
+        SelectMultipleSetting(
+            key="FORUM_IDS",
+            value=[1],
+            name="Forums",
+            description=(
+                "The forum ids from which forums the posts "
+                "should be displayed on the portal."
+            ),
+            choices=available_forums,
+            coerce=int,
         ),
-        "extra": {"choices": available_forums, "coerce": int},
-    },
-    "recent_topics": {
-        "value": 10,
-        "value_type": SettingValueType.integer,
-        "name": "Number of Recent Topics",
-        "description": "The number of topics in Recent Topics.",
-        "extra": {"min": 1},
-    },
-}
+        IntSetting(
+            key="RECENT_TOPICS",
+            value=10,
+            min=1,
+            name="Number of Recent Topics",
+            description="The number of topics in Recent Topics.",
+        ),
+    ),
+)
+
+
+@impl
+def flaskbb_load_setting_groups():
+    return SETTINGS
