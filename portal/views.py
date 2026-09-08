@@ -13,7 +13,7 @@ from flask import Blueprint, current_app, flash, request
 from flask.helpers import redirect
 from flask_babelplus import gettext as _
 from flask_login import current_user
-from flaskbb.core.settings import flaskbb_config
+from flaskbb.settings import flaskbb_config
 from flaskbb.extensions import db
 from flaskbb.forum.models import Forum, Post, Topic
 from flaskbb.plugins.models import PluginRegistry
@@ -61,7 +61,9 @@ def index():
     # get the news forums - check for permissions
     news_ids = [f.id for f in forums]
     news = db.paginate(
-        select(Topic).where(Topic.forum_id.in_(news_ids)).order_by(Topic.id.desc()),
+        select(Topic)
+        .where(Topic.forum_id.in_(news_ids), Topic.first_post_id.is_not(None))
+        .order_by(Topic.id.desc()),
         page=page,
         per_page=flaskbb_config["TOPICS_PER_PAGE"],
         error_out=True,

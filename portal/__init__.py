@@ -13,8 +13,8 @@ import os
 
 from flask import Flask
 from flask_babelplus import gettext as _
-from flaskbb.core.settings import SelectMultipleSetting
-from flaskbb.core.settings.definitions import IntSetting, SettingGroup, StringSetting
+from flaskbb.settings import SelectMultipleSetting
+from flaskbb.settings.definitions import IntSetting, SettingGroup, StringSetting
 from flaskbb.display.navigation import NavigationLink
 from flaskbb.extensions import db
 from flaskbb.forum.models import Forum
