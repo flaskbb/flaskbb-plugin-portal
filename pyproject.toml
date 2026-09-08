@@ -1,6 +1,6 @@
 [project]
 name = "flaskbb-plugin-portal"
-version = "2.1.0.dev2"
+version = "2.1.0.dev3"
 dependencies = [
     "FlaskBB>=3.0.0",
 ]
