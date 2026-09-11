@@ -3,3 +3,8 @@ __pycache__
 .vscode
 dist
 build
+.venv/
+.tox/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/

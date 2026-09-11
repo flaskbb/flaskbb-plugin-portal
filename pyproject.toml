@@ -29,6 +29,7 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
+
 [project.urls]
 Homepage = "https://github.com/flaskbb/flaskbb-plugin-portal"
 Repository = "https://github.com/flaskbb/flaskbb-plugin-portal"
@@ -42,36 +43,56 @@ portal = 'portal'
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[dependency-groups]
-dev = [
-    "hatch",
-    "Babel",
-    "alabaster",
-    "cov-core",
-    "coverage",
-    "freezegun",
-    "ipython",
-    "pre-commit",
-    "py",
-    "pytest",
-    "ruff",
-]
-
 [tool.hatch.build.targets.sdist]
 only-include = ["portal"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["portal"]
 
+[dependency-groups]
+dev = [
+    "ipython>=9.9.0",
+    "ruff",
+    "tox>=4.39",
+    "tox-uv",
+    {include-group = "pre-commit"},
+    {include-group = "tests"},
+    {include-group = "typing"},
+]
+pre-commit = [
+    "pre-commit",
+    "pre-commit-uv",
+]
+tests = [
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "pytest-xdist",
+    "cov-core",
+    "coverage",
+    "freezegun",
+]
+typing = [
+    "mypy",
+    "basedpyright",
+    "types-WTForms",
+]
+
 [tool.uv]
 package = true
+default-groups = ["dev"]
+
+[tool.uv.sources]
+flaskbb = { path = "../flaskbb", editable = true }
 
 [tool.hatch.metadata]
 allow-direct-references = true
 
 [tool.basedpyright]
 include = ["portal"]
-exclude = ["**/node_modules", "**/resources", "**/__pycache__"]
+exclude = ["**/node_modules", "**/resources", "**/__pycache__", "**/docs", "portal/migrations"]
+typeCheckingMode = "standard"
+pythonVersion = "3.12"
 defineConstant = { DEBUG = true }
 reportGeneralTypeIssues = "none"
 reportIgnoreCommentWithoutRule = false
@@ -80,8 +101,158 @@ reportMissingTypeStubs = false
 reportUnusedCallResult = false
 reportUnannotatedClassAttribute = false
 reportUnusedParameter = false
+reportImplicitStringConcatenation = false
 reportAny = false
 reportExplicitAny = false
+reportMissingSuperCall = false
+
+[tool.pytest]
+minversion = "9.0"
+filterwarnings = [
+    "ignore::jwt.warnings.InsecureKeyLengthWarning"
+]
+addopts = [
+    "-vvl",
+    "--strict-markers",
+    "--capture", "fd",
+    "--tb", "short",
+    "--pythonwarnings", "error::flaskbb.deprecation.FlaskBBDeprecation",
+    "--numprocesses", "auto",
+    "--dist", "load"
+]
+testpaths = [
+    "tests",
+]
+
+[tool.ruff]
+src = ["."]
+fix = true
+show-fixes = true
+line-length = 100
+output-format = "full"
 
 [tool.ruff.lint]
-ignore = ["E711", "E712"]
+select = [
+    "B",  # flake8-bugbear
+    "E",  # pycodestyle error
+    "F",  # pyflakes
+    "I",  # isort
+    "UP",  # pyupgrade
+    "W",  # pycodestyle warning
+]
+ignore = [
+    "E711",
+    "E712",
+]
+
+[tool.ruff.lint.isort]
+order-by-type = false
+# tests.fixtures comes from the FlaskBB checkout, not from this repo
+known-third-party = ["tests"]
+
+[tool.ruff.lint.per-file-ignores]
+"portal/migrations/*" = ["E501"]
+"tests/conftest.py" = ["F403"]
+
+[tool.coverage.run]
+branch = true
+source = ["portal", "tests"]
+omit = [
+    "portal/static/*",
+    "portal/templates/*",
+    "portal/migrations/*"
+]
+
+[tool.coverage.paths]
+source = ["portal"]
+
+[tool.coverage.report]
+exclude_also = [
+    "if t.TYPE_CHECKING",
+    "raise NotImplementedError",
+    ": \\.{3}",
+]
+
+[tool.mypy]
+python_version = "3.12"
+files = ["portal/"]
+exclude = ["^portal/migrations/"]
+warn_unused_configs = true
+show_error_codes = true
+pretty = true
+disallow_subclassing_any = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+strict_equality = true
+extra_checks = true
+
+# No py.typed and no stubs on typeshed
+[[tool.mypy.overrides]]
+module = [
+    "flaskbb.*",
+    "flask_login.*",
+    "flask_wtf.*",
+    "wtforms_sqlalchemy.*",
+]
+follow_untyped_imports = true
+
+
+[tool.tox]
+env_list = [
+    "py3.14",
+    "py3.13",
+    "py3.12",
+    "style",
+    "typing",
+]
+
+[tool.tox.env_run_base]
+description = "pytest on latest dependency versions"
+runner = "uv-venv-lock-runner"
+package = "wheel"
+wheel_build_env = ".pkg"
+constrain_package_deps = true
+use_frozen_constraints = true
+dependency_groups = ["tests"]
+env_tmp_dir = "{toxworkdir}/tmp/{envname}"
+# tests.fixtures lives in the FlaskBB checkout and is only importable from there
+set_env = { PYTHONPATH = "{tox_root}{/}..{/}flaskbb" }
+commands = [
+    ["pybabel", "compile", "-d", "{envsitepackagesdir}/portal/translations"],
+    [
+        "pytest", "-v", "--capture=tee-sys", "--tb=short", "--basetemp={env_tmp_dir}",
+        {replace = "posargs", default = [], extend = true},
+    ],
+]
+
+[tool.tox.env.style]
+description = "run all pre-commit hooks on all files"
+dependency_groups = ["pre-commit"]
+skip_install = true
+commands = [["pre-commit", "run", "--all-files"]]
+
+[tool.tox.env.typing]
+description = "run static type checkers"
+dependency_groups = ["typing"]
+ignore_errors = true
+commands = [
+    ["mypy"],
+    ["basedpyright", "--pythonpath", "{envpython}"],
+]
+
+[tool.tox.env.update-pre_commit]
+description = "update pre-commit pins"
+labels = ["update"]
+dependency_groups = ["pre-commit"]
+skip_install = true
+commands = [["pre-commit", "autoupdate", "--freeze", "-j4"]]
+
+[tool.tox.env.update-requirements]
+description = "update uv lock"
+labels = ["update"]
+dependency_groups = []
+no_default_groups = true
+skip_install = true
+commands = [["uv", "lock", {replace = "posargs", default = ["-U"], extend = true}]]
