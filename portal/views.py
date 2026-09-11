@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 flaskbb.plugins.portal.views
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -13,10 +12,10 @@ from flask import Blueprint, current_app, flash, request
 from flask.helpers import redirect
 from flask_babelplus import gettext as _
 from flask_login import current_user
-from flaskbb.settings import flaskbb_config
 from flaskbb.extensions import db
 from flaskbb.forum.models import Forum, Post, Topic
 from flaskbb.plugins.models import PluginRegistry
+from flaskbb.settings import flaskbb_config
 from flaskbb.user.models import Group, User
 from flaskbb.utils.helpers import get_online_users, render_template, time_diff
 from sqlalchemy import select
@@ -38,10 +37,7 @@ def index():
         return redirect("forum.index")
     if not plugin.settings:
         flash(
-            _(
-                "Please install the plugin first to configure the forums "
-                "which should be displayed."
-            ),
+            _("Please install the plugin first to configure the forums which should be displayed."),
             "warning",
         )
     else:
@@ -50,9 +46,7 @@ def index():
 
     forums = (
         db.session.execute(
-            select(Forum).where(
-                Forum.groups.any(Group.id.in_(group_ids)), Forum.id.in_(forum_ids)
-            )
+            select(Forum).where(Forum.groups.any(Group.id.in_(group_ids)), Forum.id.in_(forum_ids))
         )
         .scalars()
         .unique()
@@ -72,9 +66,7 @@ def index():
     # get the recent topics from all to the user available forums (not just the
     # configured ones)
     all_forums = (
-        db.session.execute(
-            select(Forum).where(Forum.groups.any(Group.id.in_(group_ids)))
-        )
+        db.session.execute(select(Forum).where(Forum.groups.any(Group.id.in_(group_ids))))
         .scalars()
         .unique()
     )

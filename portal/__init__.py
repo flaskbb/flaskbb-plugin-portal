@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 flaskbb.plugins.portal
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -13,11 +12,11 @@ import os
 
 from flask import Flask
 from flask_babelplus import gettext as _
-from flaskbb.settings import SelectMultipleSetting
-from flaskbb.settings.definitions import IntSetting, SettingGroup, StringSetting
 from flaskbb.display.navigation import NavigationLink
 from flaskbb.extensions import db
 from flaskbb.forum.models import Forum
+from flaskbb.settings import SelectMultipleSetting
+from flaskbb.settings.definitions import IntSetting, SettingGroup
 from pluggy import HookimplMarker
 from sqlalchemy import select
 
@@ -30,9 +29,7 @@ hookimpl = HookimplMarker("flaskbb")
 
 
 def available_forums():
-    forums = (
-        db.session.execute(select(Forum).order_by(Forum.id.asc())).scalars().unique()
-    )
+    forums = db.session.execute(select(Forum).order_by(Forum.id.asc())).scalars().unique()
     return [(forum.id, forum.title) for forum in forums]
 
 
@@ -48,9 +45,7 @@ def flaskbb_load_translations():
 
 @hookimpl
 def flaskbb_load_blueprints(app: Flask):
-    app.register_blueprint(
-        portal, url_prefix=app.config.get("PLUGIN_PORTAL_URL_PREFIX", "/portal")
-    )
+    app.register_blueprint(portal, url_prefix=app.config.get("PLUGIN_PORTAL_URL_PREFIX", "/portal"))
 
 
 @hookimpl
@@ -74,8 +69,7 @@ SETTINGS = SettingGroup(
             value=[1],
             name="Forums",
             description=(
-                "The forum ids from which forums the posts "
-                "should be displayed on the portal."
+                "The forum ids from which forums the posts should be displayed on the portal."
             ),
             choices=available_forums,
             coerce=int,
