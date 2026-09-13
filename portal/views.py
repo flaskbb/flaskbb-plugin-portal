@@ -92,7 +92,7 @@ def index():
         online_guests = len(get_online_users(guest=True))
 
     return render_template(
-        "index.html",
+        "portal/index.html",
         news=news,
         recent_topics=recent_topics,
         user_count=user_count,
