@@ -867,11 +867,13 @@ provides-extras = ["gunicorn"]
 dev = [
     { name = "alabaster" },
     { name = "basedpyright" },
+    { name = "cookiecutter" },
     { name = "cov-core" },
     { name = "coverage" },
     { name = "freezegun" },
     { name = "ipython", specifier = ">=9.9.0" },
     { name = "mypy" },
+    { name = "myst-parser" },
     { name = "pre-commit" },
     { name = "pre-commit-uv" },
     { name = "pytest" },
@@ -895,6 +897,7 @@ dev = [
 ]
 docs = [
     { name = "alabaster" },
+    { name = "myst-parser" },
     { name = "sphinx" },
     { name = "sphinx-intl", specifier = ">=2.3.1" },
     { name = "sphinx-issues" },

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-02-07 19:44+0100\n"
+"POT-Creation-Date: 2026-09-14 21:28+0200\n"
 "PO-Revision-Date: 2017-08-30 20:01+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans_CN\n"
@@ -18,26 +18,33 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: build/lib/portal/__init__.py:54 portal/__init__.py:59
+#: build/lib/portal/__init__.py:54 portal/__init__.py:55
 msgid "Portal"
 msgstr ""
 
-#: build/lib/portal/views.py:34 portal/views.py:35
+#: build/lib/portal/views.py:34 portal/views.py:40
 #, fuzzy
 msgid ""
 "Please install the plugin first to configure the forums which should be "
 "displayed."
 msgstr "在配置论坛之前请首先安装要使用的插件."
 
-#: build/lib/portal/templates/index.html:87 portal/templates/index.html:87
+#: build/lib/portal/templates/index.html:87
+#: portal/templates/portal/index.html:87
 msgid "News"
 msgstr "最新信息"
 
-#: build/lib/portal/templates/index.html:113 portal/templates/index.html:113
+#: build/lib/portal/templates/index.html:113
+#: portal/templates/portal/index.html:113
 msgid "Recent Topics"
 msgstr "论坛新帖"
 
-#: build/lib/portal/templates/index.html:136 portal/templates/index.html:136
+#: build/lib/portal/templates/index.html:136
+#: portal/templates/portal/index.html:136
 msgid "Statistics"
 msgstr "统计"
+
+#: portal/views.py:34
+msgid "Plugin 'portal' could not be found in the plugin registry."
+msgstr ""
 
