@@ -9,3 +9,4 @@ Version 2.0.0
 Unreleased
 
 * Switch to pyproject.toml
+* Fix the redirect to the forum index when the plugin is not registered

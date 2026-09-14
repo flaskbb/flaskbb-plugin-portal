@@ -8,7 +8,7 @@ This module contains the portal view.
 :license: BSD, see LICENSE for more details.
 """
 
-from flask import Blueprint, current_app, flash, request
+from flask import Blueprint, current_app, flash, request, url_for
 from flask.helpers import redirect
 from flask_babelplus import gettext as _
 from flask_login import current_user
@@ -34,7 +34,7 @@ def index():
             _("Plugin 'portal' could not be found in the plugin registry."),
             "warning",
         )
-        return redirect("forum.index")
+        return redirect(url_for("forum.index"))
     if not plugin.settings:
         flash(
             _("Please install the plugin first to configure the forums which should be displayed."),
