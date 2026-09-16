@@ -8,7 +8,7 @@ This module contains the portal view.
 :license: BSD, see LICENSE for more details.
 """
 
-from flask import Blueprint, current_app, flash, request, url_for
+from flask import Blueprint, flash, request, url_for
 from flask.helpers import redirect
 from flask_babelplus import gettext as _
 from flask_login import current_user
@@ -17,7 +17,7 @@ from flaskbb.forum.models import Forum, Post, Topic
 from flaskbb.plugins.models import PluginRegistry
 from flaskbb.settings import flaskbb_config
 from flaskbb.user.models import Group, User
-from flaskbb.utils.helpers import get_online_users, render_template, time_diff
+from flaskbb.utils.helpers import count_online_users, render_template
 from sqlalchemy import select
 
 portal = Blueprint("portal", __name__, template_folder="templates")
@@ -82,14 +82,7 @@ def index():
     topic_count = Topic.count()
     post_count = Post.count()
     newest_user = db.session.execute(select(User).order_by(User.id.desc())).scalar()
-
-    # Check if we use redis or not
-    if not current_app.config["REDIS_ENABLED"]:
-        online_users = User.count(clause=[User.lastseen >= time_diff()])
-        online_guests = None
-    else:
-        online_users = len(get_online_users())
-        online_guests = len(get_online_users(guest=True))
+    online_users, online_guests = count_online_users()
 
     return render_template(
         "portal/index.html",
@@ -99,6 +92,6 @@ def index():
         topic_count=topic_count,
         post_count=post_count,
         newest_user=newest_user,
-        online_guests=online_guests,
         online_users=online_users,
+        online_guests=online_guests,
     )

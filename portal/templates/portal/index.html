@@ -185,7 +185,7 @@
               </div>
             </div>
 
-            {% if config["REDIS_ENABLED"] %}
+            {% if online_guests is not none %}
             <div class="portal-stats">
               <div class="portal-stats-left">
                 Guests online
