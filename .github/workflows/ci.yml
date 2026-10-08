@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+
+    # pyproject.toml installs flaskbb from ../flaskbb and the tests import its tests.fixtures
+    defaults:
+      run:
+        working-directory: plugin
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: plugin
+
+      - name: Check out FlaskBB
+        uses: actions/checkout@v6
+        with:
+          repository: flaskbb/flaskbb
+          path: flaskbb
+
+      - name: Install uv and set up Python
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Lint with ruff
+        run: uv run ruff check
+
+      - name: Check formatting with ruff
+        run: uv run ruff format --check
+
+      - name: Test with pytest
+        run: uv run pytest

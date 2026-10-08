@@ -5,7 +5,7 @@ This plugin provides a simple portal for FlaskBB.
 In addition to the settings that can be changed via the management panel,
 one setting has to be added (if desired) to your ``flaskbb.cfg``:
 ```python
-PLUGIN_PORTAL_URL_PREFIX="/yourportalurlprefix"
+PLUGIN_PORTAL_URL_PREFIX = "/yourportalurlprefix"
 ```
 This setting allows you to change the URL of the portal from the default
 value of ``/portal`` to something else. Be sure to **not** change it to something that

@@ -22,9 +22,6 @@ from sqlalchemy import select
 
 from .views import portal
 
-__version__ = "1.2.0"
-
-
 hookimpl = HookimplMarker("flaskbb")
 
 
