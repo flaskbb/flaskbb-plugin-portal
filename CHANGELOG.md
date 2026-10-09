@@ -3,8 +3,10 @@ Changelog
 
 Here you can see the full list of changes between each release.
 
-Unreleased
-----------
+Version 3.0.3
+-------------
+
+Released on October 9th, 2026
 
 * Reduce the number of queries being used when viewing the portal
 
