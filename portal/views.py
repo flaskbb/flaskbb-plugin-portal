@@ -12,15 +12,30 @@ from flask import Blueprint, flash, request, url_for
 from flask.helpers import redirect
 from flask_babelplus import gettext as _
 from flask_login import current_user
-from flaskbb.extensions import db
+from flaskbb.extensions import cache, db
 from flaskbb.forum.models import Forum, Post, Topic
 from flaskbb.plugins.models import PluginRegistry
 from flaskbb.settings import flaskbb_config
 from flaskbb.user.models import Group, User
 from flaskbb.utils.helpers import count_online_users, render_template
-from sqlalchemy import select
+from sqlalchemy import func, select
+from sqlalchemy.orm import selectinload
 
 portal = Blueprint("portal", __name__, template_folder="templates")
+
+
+@cache.cached(timeout=60, key_prefix="portal_statistics")
+def board_statistics() -> dict[str, int]:
+    """Counting every post is a full table scan on PostgreSQL, so the
+    numbers may lag by a minute."""
+
+    def count_rows(model):
+        return select(func.count()).select_from(model).scalar_subquery()
+
+    user_count, topic_count, post_count = db.session.execute(
+        select(count_rows(User), count_rows(Topic), count_rows(Post))
+    ).one()
+    return {"user_count": user_count, "topic_count": topic_count, "post_count": post_count}
 
 
 @portal.route("/")
@@ -44,54 +59,39 @@ def index():
         forum_ids: list[int] = plugin.settings["FORUM_IDS"]
     group_ids = [group.id for group in current_user.groups]
 
-    forums = (
-        db.session.execute(
-            select(Forum).where(Forum.groups.any(Group.id.in_(group_ids)), Forum.id.in_(forum_ids))
-        )
-        .scalars()
-        .unique()
-    )
+    # every forum the user may see, as plain ids - the news forums are the
+    # configured subset of them
+    visible_forum_ids = db.session.scalars(
+        select(Forum.id).where(Forum.groups.any(Group.id.in_(group_ids)))
+    ).all()
+    news_forum_ids = set(visible_forum_ids) & set(forum_ids)
 
-    # get the news forums - check for permissions
-    news_ids = [f.id for f in forums]
     news = db.paginate(
         select(Topic)
-        .where(Topic.forum_id.in_(news_ids), Topic.first_post_id.is_not(None))
+        .where(Topic.forum_id.in_(news_forum_ids), Topic.first_post_id.is_not(None))
+        .options(selectinload(Topic.first_post))
         .order_by(Topic.id.desc()),
         page=page,
         per_page=flaskbb_config["TOPICS_PER_PAGE"],
         error_out=True,
     )
 
-    # get the recent topics from all to the user available forums (not just the
-    # configured ones)
-    all_forums = (
-        db.session.execute(select(Forum).where(Forum.groups.any(Group.id.in_(group_ids))))
-        .scalars()
-        .unique()
-    )
-    all_ids = [f.id for f in all_forums]
-    recent_topics = db.session.execute(
+    recent_topics = db.session.scalars(
         select(Topic)
-        .where(Topic.forum_id.in_(all_ids))
+        .where(Topic.forum_id.in_(visible_forum_ids))
         .order_by(Topic.last_updated.desc())
-        .limit(plugin.settings.get("recent_topics", 10))
-    ).scalars()
+        .limit(plugin.settings.get("RECENT_TOPICS", 10))
+    ).all()
 
-    user_count = User.count()
-    topic_count = Topic.count()
-    post_count = Post.count()
-    newest_user = db.session.execute(select(User).order_by(User.id.desc())).scalar()
+    newest_user = db.session.scalar(select(User).order_by(User.id.desc()).limit(1))
     online_users, online_guests = count_online_users()
 
     return render_template(
         "portal/index.html",
         news=news,
         recent_topics=recent_topics,
-        user_count=user_count,
-        topic_count=topic_count,
-        post_count=post_count,
         newest_user=newest_user,
         online_users=online_users,
         online_guests=online_guests,
+        **board_statistics(),
     )

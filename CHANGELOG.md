@@ -3,6 +3,11 @@ Changelog
 
 Here you can see the full list of changes between each release.
 
+Unreleased
+----------
+
+* Reduce the number of queries being used when viewing the portal
+
 Version 3.0.1
 -------------
 
