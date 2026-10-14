@@ -6,7 +6,7 @@ Here you can see the full list of changes between each release.
 Version 3.0.4
 -------------
 
-Unreleased
+Released on October 14th, 2026
 
 * The comment count of a news topic no longer includes its first post
 
