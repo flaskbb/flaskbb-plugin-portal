@@ -3,6 +3,14 @@ Changelog
 
 Here you can see the full list of changes between each release.
 
+Version 3.0.4
+-------------
+
+Unreleased
+
+* The comment count of a news topic no longer includes its first post
+
+
 Version 3.0.3
 -------------
 

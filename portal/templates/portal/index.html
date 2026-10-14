@@ -93,7 +93,7 @@
         <ul class="portal-info">
             <li><i class="fa fa-calendar"></i> {{ topic.date_created|format_date }}</li>
             <li><i class="fa fa-user"></i> <a href="{{ url_for('user.profile', username=topic.user.username) }}">{{ topic.user.username }}</a></li>
-            <li><i class="fa fa-comment"></i> <a href="{{ topic.url }}">Comments ({{ topic.post_count }})</a></li>
+            <li><i class="fa fa-comment"></i> <a href="{{ topic.url }}">Comments ({{ topic.post_count - 1 }})</a></li>
         </ul>
         <div class="portal-content">
             {{ topic.first_post.content | markup | safe }}<br />

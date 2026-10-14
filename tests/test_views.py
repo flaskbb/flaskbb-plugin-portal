@@ -123,3 +123,16 @@ def test_index_query_count_does_not_grow_with_forums_and_topics(
     assert with_many_topics == with_one_topic
     assert b"<strong>news 7</strong>" in resp.data
     assert b">elsewhere 4</a>" in resp.data
+
+
+def test_index_counts_the_replies_as_comments(
+    client, user, category, default_groups, installed_portal
+):
+    news_forum = _forum(category, default_groups, "News")
+    topic = _topic(news_forum, user, "Announcement")
+    Post(content="A reply").save(user=user, topic=topic)
+    installed_portal(FORUM_IDS=[news_forum.id])
+
+    resp = client(user).get("/portal/")
+
+    assert b"Comments (1)</a>" in resp.data
