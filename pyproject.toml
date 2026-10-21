@@ -2,7 +2,7 @@
 name = "flaskbb-plugin-portal"
 version = "3.0.4"
 dependencies = [
-    "FlaskBB>=3.0.0rc4",
+    "FlaskBB>=3.0.0rc5",
 ]
 requires-python = ">=3.12"
 authors = [
@@ -26,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
@@ -51,9 +52,9 @@ packages = ["portal"]
 
 [dependency-groups]
 dev = [
-    "ipython>=9.9.0",
+    "ipython>=9.17.1",
     "ruff",
-    "tox>=4.39",
+    "tox>=4.67.1",
     "tox-uv",
     {include-group = "pre-commit"},
     {include-group = "tests"},
@@ -201,6 +202,7 @@ follow_untyped_imports = true
 
 [tool.tox]
 env_list = [
+    "py3.15",
     "py3.14",
     "py3.13",
     "py3.12",
