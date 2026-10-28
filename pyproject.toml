@@ -1,6 +1,6 @@
 [project]
 name = "flaskbb-plugin-portal"
-version = "3.0.4"
+version = "3.0.5"
 dependencies = [
     "FlaskBB>=3.0.0rc5",
 ]
@@ -54,7 +54,7 @@ packages = ["portal"]
 dev = [
     "ipython>=9.17.1",
     "ruff",
-    "tox>=4.67.1",
+    "tox>=4.67.4",
     "tox-uv",
     {include-group = "pre-commit"},
     {include-group = "tests"},
@@ -65,17 +65,17 @@ pre-commit = [
     "pre-commit-uv",
 ]
 tests = [
+    "cov-core",
+    "coverage",
+    "freezegun",
     "pytest",
     "pytest-cov",
     "pytest-mock",
     "pytest-xdist",
-    "cov-core",
-    "coverage",
-    "freezegun",
 ]
 typing = [
-    "mypy",
     "basedpyright",
+    "mypy",
     "types-WTForms",
 ]
 
