@@ -3,6 +3,14 @@ Changelog
 
 Here you can see the full list of changes between each release.
 
+Version 3.0.6
+-------------
+
+Released on November 7th, 2026
+
+* Fix border color in "Recent Topics"
+
+
 Version 3.0.5
 -------------
 
